@@ -1,9 +1,0 @@
-*.txt
-*.png
-CACHE.v
-CHIP_base.v
-*.zip
-112-1_verilog_tutorial.pdf
-dclab_02.pdf
-Intro_to_Verilog.pdf
-.gitignore
