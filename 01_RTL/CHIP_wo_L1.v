@@ -105,7 +105,7 @@ module CHIP #(                                                                  
         reg [BIT_W-1:0] PC, PC_nxt;
         // reg inst_cen, inst_cen_nxt;
         reg mem_cen, mem_wen;
-        reg  hold; 
+        reg  mem_hold; 
         reg [BIT_W-1:0] mem_addr, mem_wdata, mem_rdata;
         wire mem_stall;
         reg  regWrite   ;  
@@ -264,7 +264,7 @@ module CHIP #(                                                                  
                 endcase
             end
             LW: begin
-                mem_cen = (hold)?1'b0:1'b1;
+                mem_cen = (mem_hold)?1'b0:1'b1;
                 imm_w[11:0] = inst_w[31:20];
                 mem_addr = $signed({1'b0, rs1_data}) + $signed(imm_w[11:0]);
                 rd_data = i_DMEM_rdata;
@@ -272,8 +272,8 @@ module CHIP #(                                                                  
 
             end
             SW: begin
-                mem_cen = (hold)?1'b0:1'b1;
-                mem_wen = (hold)?1'b0:1'b1;
+                mem_cen = (mem_hold)?1'b0:1'b1;
+                mem_wen = (mem_hold)?1'b0:1'b1;
                 imm_w[4:0] = inst_w[11:7];
                 imm_w[11:5] = inst_w[31:25];
                 mem_addr = $signed({1'b0, rs1_data}) + $signed(imm_w[11:0]);
@@ -370,13 +370,13 @@ module CHIP #(                                                                  
             PC          <= 32'h00010000; // Do not modify this value!!!
             state_r     <= S_IDLE;
             finish      <= 0;
-            hold        <= 0;
+            mem_hold        <= 0;
         end
         else begin
             PC          <= PC_nxt;
             state_r     <= state_w;
             finish      <= finish_nxt;
-            hold        <= (mem_stall)?1'b1:1'b0;
+            mem_hold        <= (mem_stall)?1'b1:1'b0;
         end
     end
 endmodule
@@ -712,23 +712,15 @@ module Cache#(
         input  [ADDR_W-1: 0] i_offset
     );
     assign o_cache_available = 0; // change this value to 1 if the cache is implemented
+    assign o_cache_finish    = (i_proc_finish)?1'b1:1'b0;
 
     //------------------------------------------//
     //          default connection              //
-    assign o_mem_cen = i_proc_cen;              //
-    assign o_mem_wen = i_proc_wen;              //
-    assign o_mem_addr = i_proc_addr;            //
-    assign o_mem_wdata = i_proc_wdata;          //
+    assign o_mem_cen    = i_proc_cen;              //
+    assign o_mem_wen    = i_proc_wen;              //
+    assign o_mem_addr   = i_proc_addr;            //
+    assign o_mem_wdata  = i_proc_wdata;          //
     assign o_proc_rdata = i_mem_rdata[0+:BIT_W];//
     assign o_proc_stall = i_mem_stall;          //
     //------------------------------------------//
-    //------------------------------------------//
-    //          Wires and Registers
-    reg done;
-    assign o_cache_finish = done;
-
-    always @(posedge i_proc_finish) 
-    begin
-        done = 1;
-    end
 endmodule

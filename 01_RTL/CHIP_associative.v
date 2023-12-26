@@ -688,7 +688,7 @@ module Cache#(
         parameter OFFSET_W = 4,
         parameter TAG_W = 25,
         parameter SET_W = 1 << INDEX_W, // how many sets?
-        parameter BLOCK_W = 2 // how many block in one set?
+        parameter BLOCK_W = 2 // how many block in each set?
     )(
         input i_clk,
         input i_rst_n,
@@ -712,9 +712,9 @@ module Cache#(
         // memory data offset
         input  [ADDR_W-1: 0] i_offset
     );
-    assign                      o_cache_available = 1; // change this value to 1 if the cache is implemented
     reg                         done, done_nxt;
-    assign                      o_cache_finish = done;
+    assign                      o_cache_available   = 1; // change this value to 1 if the cache is implemented
+    assign                      o_cache_finish      = done;
 
     //------------------------------------------//
     // //          default connection              //
@@ -779,12 +779,12 @@ module Cache#(
     reg  [BIT_W*4-1 : 0]        flush_data;
     wire                        flush;
     reg  [INDEX_W-1  : 0]       set_counter, set_counter_nxt;
-    reg  [INDEX_W-1  : 0]       block_counter, block_counter_nxt;
+    reg  [BLOCK_W-1  : 0]       block_counter, block_counter_nxt;
 
     // SRAM Memory.
     reg  [BIT_W*4-1 : 0]        data [0 : SET_W-1][0 : BLOCK_W-1]; // 1KB
     reg  [TAG_W+1 : 0]          tag [0 : SET_W-1][0 : BLOCK_W-1];
-    reg  [1 : 0]                last [0 : SET_W-1];
+    reg  [BLOCK_W-1 : 0]        last [0 : SET_W-1];
 
     // Flush
     assign flush = (i_proc_finish & o_cache_available)?((done)?1'b0:1'b1):1'b0;
@@ -808,19 +808,19 @@ module Cache#(
     assign	cache_sram_data     = (hit) ? w_hit_data : mem_rdata;
 
     assign sram_cache_data      = (cache_sram_cen)?((hit_b0)?data[cache_sram_index][0]:
-    ((hit_b1)?data[cache_sram_index][1]:data[cache_sram_index][last[cache_sram_index]])):sram_cache_data;
+    ((hit_b1)?data[cache_sram_index][1]:data[cache_sram_index][last[cache_sram_index]])):128'b0;
     assign sram_cache_tag       = (cache_sram_cen)?((hit_b0)?tag[cache_sram_index][0]:
-    ((hit_b1)?tag[cache_sram_index][1]:tag[cache_sram_index][last[cache_sram_index]])):sram_cache_tag;
+    ((hit_b1)?tag[cache_sram_index][1]:tag[cache_sram_index][last[cache_sram_index]])):25'b0;
 
     // Memory interface.
     assign	o_mem_cen       = mem_cen;
     assign	o_mem_addr      = (write_back)?{sram_tag, proc_index, data_byte_offset}:((flush)?flush_address:i_proc_addr);
     assign	o_mem_wdata     = (flush)?flush_data:sram_cache_data;
     assign	o_mem_wen       = mem_wen;
-    assign  mem_rdata       = i_mem_rdata;
     assign	write_hit       = hit & i_proc_wen;
     assign	cache_dirty     = write_hit;
     assign  mem_stall       = i_mem_stall;
+    assign  mem_rdata       = i_mem_rdata;
     assign  data_byte_offset     = i_offset[3:0];
 
     // Tag comparator.
@@ -988,7 +988,7 @@ module Cache#(
         end
         else begin  
             state               <= state_nxt;
-            mem_hold            <= (i_mem_stall)?1'b1:1'b0;
+            mem_hold            <= (mem_stall)?1'b1:1'b0;
             done                <= done_nxt;
             set_counter         <= set_counter_nxt;
             block_counter       <= block_counter_nxt;

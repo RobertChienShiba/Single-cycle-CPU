@@ -711,9 +711,9 @@ module Cache#(
         // memory data offset
         input  [ADDR_W-1: 0] i_offset
     );
-    assign                      o_cache_available = 1; // change this value to 1 if the cache is implemented
     reg                         done, done_nxt;
-    assign                      o_cache_finish = done;
+    assign                      o_cache_available   = 1; // change this value to 1 if the cache is implemented
+    assign                      o_cache_finish      = done;
 
     //------------------------------------------//
     // //          default connection              //
@@ -810,11 +810,11 @@ module Cache#(
     assign	o_mem_addr      = (write_back)?{sram_tag, proc_index, data_byte_offset}:((flush)?flush_address:i_proc_addr);
     assign	o_mem_wdata     = (flush)?flush_data:sram_cache_data;
     assign	o_mem_wen       = mem_wen;
-    assign  mem_rdata       = i_mem_rdata;
     assign	write_hit       = hit & i_proc_wen;
     assign	cache_dirty     = write_hit;
     assign  mem_stall       = i_mem_stall;
-    assign  data_byte_offset     = i_offset[3:0];
+    assign  mem_rdata       = i_mem_rdata;
+    assign  data_byte_offset    = i_offset[3:0];
 
     // Tag comparator.
     assign hit              = (proc_tag == sram_tag && sram_valid)? 1'b1 : 1'b0;
@@ -971,7 +971,7 @@ module Cache#(
         end
         else begin  
             state       <= state_nxt;
-            mem_hold    <= (i_mem_stall)?1'b1:1'b0;
+            mem_hold    <= (mem_stall)?1'b1:1'b0;
             done        <= done_nxt;
             counter     <= counter_nxt;
         end

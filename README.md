@@ -1,5 +1,5 @@
 # Single Cycle CPU with 2-way Set associative Cache
-**All logic circuits are Flip-Flops**
+**All logic circuits are Flip-Flop**
 ## Architecture Overview
 ### Brief version
 ![Block Diagram](https://i.imgur.com/Hstt7CH.png)
