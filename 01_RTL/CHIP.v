@@ -807,7 +807,7 @@ module Cache#(
 
     // Memory interface.
     assign	o_mem_cen       = mem_cen;
-    assign	o_mem_addr      = (write_back)?{sram_tag, proc_index, data_byte_offset}:((flush)?flush_address:i_proc_addr);
+    assign	o_mem_addr      = (write_back)?{sram_tag, proc_index, data_byte_offset}:((flush)?flush_address:{proc_tag, proc_index, data_byte_offset});
     assign	o_mem_wdata     = (flush)?flush_data:sram_cache_data;
     assign	o_mem_wen       = mem_wen;
     assign	write_hit       = hit & i_proc_wen;
