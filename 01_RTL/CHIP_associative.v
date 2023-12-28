@@ -234,10 +234,10 @@ module CHIP #(                                                                  
                         rd_data = $signed(rs1_data) + $signed(imm_w[11:0]);
                     end
                     SLLI_FUNC3: begin
-                        rd_data = $signed(rs1_data) << $signed(imm_w[11:0]);
+                        rd_data = $signed(rs1_data) << $signed(imm_w[4:0]);
                     end
                     SRAI_FUNC3: begin
-                        rd_data = $signed(rs1_data) >>> $signed(imm_w[11:0]);
+                        rd_data = $signed(rs1_data) >>> $signed(imm_w[4:0]);
                     end
                     SLTI_FUNC3: begin
                         rd_data = ($signed(rs1_data) < $signed(imm_w[11:0]))?32'd1:32'd0;                                 
@@ -833,7 +833,7 @@ module Cache#(
 
     always @(*) begin
         if (o_cache_available) begin
-            done_nxt = (set_counter == SET_W-1 && block_counter == BLOCK_W-1)?1'b1:1'b0;
+            done_nxt = (set_counter == SET_W-1 && block_counter == BLOCK_W-1 && mem_stall == 0)?1'b1:1'b0;
         end
         else begin
             done_nxt = 1'b1;
