@@ -39,8 +39,8 @@
 - I1: Factorial 
 ([Python](https://github.com/RobertChienShiba/Single-cycle-CPU/tree/main/03_Python/I1_fact_gen.py)) ([Assembly](https://github.com/RobertChienShiba/Single-cycle-CPU/tree/main/02_Assembly/I1_fact.s))
 - I2: Recursive relation function 
-([Python](https://github.com/RobertChienShiba/Single-cycle-CPU/tree/main/03_Python/I2_hw1_gen.py)) 
-([Assembly](https://github.com/RobertChienShiba/Single-cycle-CPU/tree/main/02_Assembly/I2_hw1.s))
+([Python](https://github.com/RobertChienShiba/Single-cycle-CPU/tree/main/03_Python/I2_recursive_gen.py)) 
+([Assembly](https://github.com/RobertChienShiba/Single-cycle-CPU/tree/main/02_Assembly/I2_recursive.s))
 - I3: Bubble sort 
 ([Python](https://github.com/RobertChienShiba/Single-cycle-CPU/tree/main/03_Python/I3_sort_gen.py)) 
 ([Assembly](https://github.com/RobertChienShiba/Single-cycle-CPU/tree/main/02_Assembly/I3_sort.s))
