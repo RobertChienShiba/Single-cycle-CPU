@@ -810,7 +810,7 @@ module Cache#(
     assign sram_cache_data      = (cache_sram_cen)?((hit_b0)?data[cache_sram_index][0]:
     ((hit_b1)?data[cache_sram_index][1]:data[cache_sram_index][last[cache_sram_index]])):128'b0;
     assign sram_cache_tag       = (cache_sram_cen)?((hit_b0)?tag[cache_sram_index][0]:
-    ((hit_b1)?tag[cache_sram_index][1]:tag[cache_sram_index][last[cache_sram_index]])):25'b0;
+    ((hit_b1)?tag[cache_sram_index][1]:tag[cache_sram_index][last[cache_sram_index]])):27'b0;
 
     // Memory interface.
     assign	o_mem_cen       = mem_cen;
@@ -861,7 +861,12 @@ module Cache#(
     always @(*) begin
         if (hit) begin
             // $display("read from cache!!!");
-            proc_rdata = (data_byte_offset > proc_offset)?r_hit_data[(proc_offset + (1 << OFFSET_W) - data_byte_offset)*8+:BIT_W]:r_hit_data[(proc_offset - data_byte_offset)*8+:BIT_W];
+            if (data_byte_offset > proc_offset) begin
+                proc_rdata = r_hit_data[(proc_offset + (1 << OFFSET_W) - data_byte_offset)*8+:BIT_W];
+            end
+            else begin
+                proc_rdata = r_hit_data[(proc_offset - data_byte_offset)*8+:BIT_W];
+            end
         end
         else begin
             // $display("prepare to load from memory!!!");
