@@ -44,7 +44,7 @@
 - I3: Bubble sort 
 ([Python](https://github.com/RobertChienShiba/Single-cycle-CPU/tree/main/03_Python/I3_sort_gen.py)) 
 ([Assembly](https://github.com/RobertChienShiba/Single-cycle-CPU/tree/main/02_Assembly/I3_sort.s))
-- IH: Same as `I3` but with `101` elements (**Rank: 3 / 52**)
+- IH: Same as `I3` but with `101` elements (**Rank: 3 / 75**)
 
 **Consider finally store data back to memory**
 
